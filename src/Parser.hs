@@ -16,3 +16,6 @@ lineParser = genParser lines
 toIntList :: ParsedFile -> [Integer]
 toIntList  = map read 
 
+toIntListList :: ParsedFile -> [[Integer]]
+toIntListList []        = [[]]
+toIntListList (x:rest)  = toIntList (words x) : toIntListList rest
