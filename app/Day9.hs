@@ -37,22 +37,7 @@ toSizeIndex [] = []
 toSizeIndex [x] = [(length x, getIndex x)]
 toSizeIndex (x:rest) = (length x, getIndex x) : toSizeIndex rest
 
-moveSizedBlocks :: [(Int, Maybe Int)] -> [Maybe Int]
-moveSizedBlocks [] = []
-moveSizedBlocks [(sizet, t)] = replicate sizet t
-moveSizedBlocks ((sizet, t):rest) = case t of
-    Just n  -> replicate sizet (Just n) ++ moveSizedBlocks rest
-    Nothing -> replaceWithSmallerBlock sizet rest
-  where
-    -- Function to handle the `Nothing` case
-    replaceWithSmallerBlock :: Int -> [(Int, Maybe Int)] -> [Maybe Int]
-    replaceWithSmallerBlock _ [] = []  -- No more blocks to process
-    replaceWithSmallerBlock remainingSize ((sizeu, Just n):rest1)
-      | sizeu <= remainingSize = replicate sizeu (Just n) ++ moveSizedBlocks rest1
-      | otherwise = replicate remainingSize (Just n) ++ replaceWithSmallerBlock (remainingSize - sizeu) rest1
-    replaceWithSmallerBlock remainingSize ((sizeu, Nothing):rest2)
-      | sizeu <= remainingSize = Nothing : replaceWithSmallerBlock (remainingSize - sizeu) rest2
-      | otherwise = Nothing : moveSizedBlocks ((remainingSize - sizeu, Nothing) : rest2)
+
 
 
 safeLast :: [(Int,Maybe Int)] -> (Int,Maybe Int)
@@ -90,9 +75,6 @@ part2 = do
     let freeSpace = generateFreeSpace freeSpaceList
     let disk = zipWith (++) fileBlocks freeSpace
     let indexDisk = toSizeIndex disk
-    let sortedDisk = moveSizedBlocks indexDisk
-    print sortedDisk
-    let checksum = sum (zipWith (*) [0..]  (map (fromMaybe 0) sortedDisk))
     --print checksum
     print "2"
 
