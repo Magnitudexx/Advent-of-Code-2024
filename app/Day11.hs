@@ -2,44 +2,35 @@ module Main where
 
 import Parser
 import System.Environment
+import qualified Data.Map.Strict as Map
+import Data.Maybe (fromMaybe)
 
-dropRed0 :: String -> String 
-dropRed0 [] = []
-dropRed0 [x] = [x]
-dropRed0 str = show (read str :: Integer)
---stringToInteger is a good function
-blinkStonesOnce :: [String] -> [String]
-blinkStonesOnce = concatMap process
-  where
-    process x
-        | x == "0"              = ["1"]
-        | even (length x)       = [dropRed0 split1, dropRed0 split2]
-        | otherwise             = [show ((read x :: Integer) * 2024)]
-      where
-        halfLength = length x `div` 2
-        (split1, split2) = splitAt halfLength x
+type Level = Int
+type Expansion = [String]
 
-blinkStonesN :: [String] -> Int -> [String]
-blinkStonesN xs n = memoized !! n
-  where
-    memoized = iterate blinkStonesOnce xs
+type LevelExpansion = Map.Map Level Expansion
+
+type ExpansionMap = Map.Map String LevelExpansion
+-- Lookup in the nested map
+lookupInNestedMap :: String -> Level -> ExpansionMap -> Maybe Expansion
+lookupInNestedMap outerKey innerKey nestedMap =
+    case Map.lookup outerKey nestedMap of
+        Nothing -> Nothing
+        Just innerMap -> Map.lookup innerKey innerMap
+
+
+
+insertInsideNestedMap :: String -> Level -> ExpansionMap -> Expansion -> ExpansionMap
+insertInsideNestedMap str n emap expansion = Map.insert str (Map.singleton n expansion) emap
+
 
 part1 :: IO ()
 part1 = do
-    initialStones <- wordParser "./inputs/day11.txt"
-    let blinkedStones = blinkStonesN initialStones 25
-    --print blinkedStones
-    let numOfStones = length blinkedStones 
-    print numOfStones
-
+    initialStones <- wordParser "./inputs/test11.txt"
     print "1"
 part2 :: IO ()
 part2 = do
     initialStones <- wordParser "./inputs/day11.txt"
-    let blinkedStones = blinkStonesN initialStones 40
-    --print blinkedStones
-    let numOfStones = length blinkedStones 
-    print numOfStones
     print "2"
 
 main :: IO ()
