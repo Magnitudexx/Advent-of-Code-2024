@@ -29,5 +29,10 @@ createMap2D file = do
     let rows = zip [0 ..] contents -- Assign y-coordinates to each row.
     return $ mapInsertWithIndex rows Map.empty
 
+createFromList :: [String] -> Map2D Char
+createFromList [] = Map.empty
+createFromList [x] = mapInsertWithIndex [(0,x)] Map.empty
+createFromList x = mapInsertWithIndex (zip [0..] x) Map.empty
+
 map2DCharToInt :: Map2D Char -> Map2D Int
 map2DCharToInt  = Map.map digitToInt
