@@ -307,9 +307,6 @@ executable day13
     -- Base language which the package is written in.
     default-language: Haskell2010
 
-    -- Base language which the package is written in.
-    default-language: Haskell2010
-
 executable day14
     -- Import common warning flags.
     import:           warnings
