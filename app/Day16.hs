@@ -16,6 +16,9 @@ type Queue = Seq Coordinates
 enqueue :: Coordinates -> Queue -> Queue
 enqueue x q = q |> x
 
+infinity :: Integer
+infinity = maxBound `div` 2
+
 enqueueList :: [Coordinates] -> Queue -> Queue
 enqueueList [] _ = Seq.empty
 enqueueList [x] s = enqueue x s
@@ -31,6 +34,16 @@ dequeue q =
 getNodeChar :: Node -> (Coordinates, Char)
 getNodeChar (Node c  a) = (c,a)
 getNodeChar Unknown = ((-1,-1),'!')
+
+updateGscore :: Map2D Score -> Coordinates -> [Coordinates] -> Map2D Score
+updateGscore gScore current [] = gScore  -- Base case: no more neighbors to process
+updateGscore gScore current (x:xs)
+    | tgScore < gScoreNeighbor = updateGscore updatedGScore current xs
+    | otherwise                = updateGscore gScore current xs
+  where
+    tgScore = fromMaybe infinity (Map.lookup current gScore) + 1
+    gScoreNeighbor = fromMaybe infinity (Map.lookup x gScore)
+    updatedGScore = Map.insert x tgScore gScore
 
 aStar :: Queue -> Map2D Char -> Map2D Coordinates -> Map2D Score -> Map2D Score -> Map2D Coordinates
 aStar openset gameMap camefrom gscore fscore = case currentChar of
