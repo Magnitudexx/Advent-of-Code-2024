@@ -6,6 +6,7 @@ import Data.Sequence (Seq, (|>), (<|), ViewL(..), viewl)
 import qualified Data.Sequence as Seq
 import qualified Data.Map.Strict as Map
 import Data.Maybe (fromMaybe)
+import GHC.RTS.Flags (DebugFlags(hpc))
 
 type Score = Integer
 data Node = Node Coordinates Char
@@ -45,6 +46,12 @@ updateGscore gScore current (x:xs)
     gScoreNeighbor = fromMaybe infinity (Map.lookup x gScore)
     updatedGScore = Map.insert x tgScore gScore
 
+updateFscore :: Map2D Score -> Map2D Score -> [Coordinates] -> Map2D Score
+updateFscore fScore _ [] = fScore
+updateFscore fScore gScore (x:xs) = updateFscore updatedFScore gScore xs
+    where
+        updatedFScore = fromMaybe infinity (Map.lookup x gScore) + h
+        h = 
 aStar :: Queue -> Map2D Char -> Map2D Coordinates -> Map2D Score -> Map2D Score -> Map2D Coordinates
 aStar openset gameMap camefrom gscore fscore = case currentChar of
     'E' -> camefrom
