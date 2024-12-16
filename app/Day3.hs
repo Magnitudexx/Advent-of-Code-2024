@@ -22,10 +22,11 @@ execOperation _                         = 0
 
 part1 :: IO ()
 part1 = do
-    listOfLines <- lineParser "inputs/day3.txt"
+    listOfLines <- lineParser "inputs/test3.txt"
     let fullLine = concat listOfLines
     let pattern = "(mul)\\(([0-9]{1,3}),([0-9]{1,3})\\)"
     let matches = map tail (fullLine =~ pattern :: [[String]]) -- Find all matches
+    print matches
     let operations = map createOperation matches
     let total = sum (map execOperation operations)
     print total
@@ -34,10 +35,18 @@ part1 = do
 
 part2 :: IO ()
 part2 = do
+    listOfLines <- lineParser "inputs/test3.txt"
+    let fullLine = concat listOfLines
+    let pattern = "(do(n't)?)\\(\\)|(mul)\\(([0-9]{1,3}),([0-9]{1,3})\\)"
+    let matches = (fullLine =~ pattern :: [[String]]) -- Find all matches
+    print matches
+    let operations = map createOperation matches
+    let total = sum (map execOperation operations)
+    print total
 main :: IO ()
 main = do
   args <- getArgs
   case args of
     ["part1"]   -> part1
-    --["part2"]   -> part2
+    ["part2"]   -> part2
     _           -> putStr "I do not know"
